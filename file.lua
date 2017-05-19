@@ -8,16 +8,15 @@ int read(int, char *, size_t);
 int write(int, char *, size_t);
 int open(char *file, int mode);
 int close(int);
-int perror(const char *);
 ]]
 
 local O_RDONLY = 0
 local O_WRONLY = bit.lshift(1, 0)
-local O_RDWR = bit.lshift(1, 1)
-local O_CREAT = bit.lshift(1, 2)
-local O_EXCL = bit.lshift(1, 3)
+local O_RDWR   = bit.lshift(1, 1)
+local O_CREAT  = bit.lshift(1, 2)
+local O_EXCL   = bit.lshift(1, 3)
 local O_NOCTTY = bit.lshift(1, 4)
-local O_TRUNC = bit.lshift(1, 5)
+local O_TRUNC  = bit.lshift(1, 5)
 local O_APPEND = bit.lshift(1, 6)
 
 -- open :: string -> { int } -> fd
