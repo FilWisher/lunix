@@ -1,5 +1,6 @@
 local ffi = require "ffi"
 local bit = require "bit"
+local util = require "util"
 local cffi = ffi.C
 
 ffi.cdef[[
@@ -19,30 +20,13 @@ local O_NOCTTY = bit.lshift(1, 4)
 local O_TRUNC = bit.lshift(1, 5)
 local O_APPEND = bit.lshift(1, 6)
 
--- bor_reduce :: { int } -> int
-local function bor_reduce(bits)
-	local bit = 0
-	for _, b in ipairs(bits) do
-		bit = bit.bor(bit, b)
-	end
-	return bit
-end
-
--- to_cstring :: string -> (char[], int)
-local function to_cstring(str)
-	 local len = #str
-	 local c_str = ffi.new("char[?]", len)
-	 ffi.copy(c_str, str)
-	 return c_str, len
-end
-
 -- open :: string -> { int } -> fd
 local function open(file, modes)
 	local mode = modes
 	if type(modes) == 'table' then
-		mode = bor_reduce(modes)
+		mode = util.bor_reduce(modes)
 	end
-	local file_str = to_cstring(file)
+	local file_str = util.cstring(file)
 	return cffi.open(file_str, mode)
 end
 
@@ -58,7 +42,7 @@ end
 
 -- write :: fd -> string -> int
 local function write(fd, str)
-	local buf, len = to_cstring(str)
+	local buf, len = util.cstring(str)
 	return cffi.write(fd, buf, len)
 end
 
