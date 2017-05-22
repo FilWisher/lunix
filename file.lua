@@ -8,6 +8,7 @@ int read(int, char *, size_t);
 int write(int, char *, size_t);
 int open(char *file, int mode);
 int close(int);
+int fcntl(int, int, ...);
 ]]
 
 local O_RDONLY = 0
@@ -18,6 +19,17 @@ local O_EXCL   = bit.lshift(1, 3)
 local O_NOCTTY = bit.lshift(1, 4)
 local O_TRUNC  = bit.lshift(1, 5)
 local O_APPEND = bit.lshift(1, 6)
+
+local O_NONBLOCK = bit.lshift(1, 11)
+
+local F_GETFL = 3
+local F_SETFL = 4
+
+local function setnonblock(fd)
+	local n = cffi.fcntl(fd, F_GETFL, 0)
+	n = bit.bor(n, O_NONBLOCK)
+	return cffi.fcntl(fd, F_SETFL, n)
+end
 
 -- open :: string -> { int } -> fd
 local function open(file, modes)
@@ -55,6 +67,8 @@ return {
 	read = read,
 	write = write,
 	close = close,
+	setnonblock = setnonblock,
+	
 	O_RDONLY = O_RDONLY,
 	O_WRONLY = O_WRONLY,
 	O_RDWR = O_RDWR,
@@ -63,4 +77,6 @@ return {
 	O_NOCTTY = O_NOCTTY,
 	O_TRUNC = O_TRUNC,
 	O_APPEND = O_APPEND,
+	
+	O_NONBLOCK = O_NONBLOCK,
 }
